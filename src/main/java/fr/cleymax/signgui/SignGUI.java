@@ -51,14 +51,15 @@ public final class SignGUI {
 	{
 		this.player = player;
 
-		final BlockPosition blockPosition = new BlockPosition(player.getLocation().getBlockX(), 1, player.getLocation().getBlockZ());
+		final BlockPosition blockPosition = new BlockPosition(player.getLocation().getBlockX(), 255, player.getLocation().getBlockZ());
 
 		PacketPlayOutBlockChange packet = new PacketPlayOutBlockChange(((CraftWorld) player.getWorld()).getHandle(), blockPosition);
 		packet.block = CraftMagicNumbers.getBlock(Material.SIGN_POST).getBlockData();
 		sendPacket(packet);
 
 		IChatBaseComponent[] components = CraftSign.sanitizeLines(lines);
-		TileEntitySign       sign       = new TileEntitySign();
+		TileEntitySign sign = new TileEntitySign();
+		sign.a(blockPosition);
 		System.arraycopy(components, 0, sign.lines, 0, sign.lines.length);
 		sendPacket(sign.getUpdatePacket());
 
