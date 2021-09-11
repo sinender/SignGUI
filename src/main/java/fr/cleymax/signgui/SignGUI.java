@@ -1,12 +1,12 @@
 package fr.cleymax.signgui;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.block.CraftSign;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.block.CraftSign;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 
 import java.beans.ConstructorProperties;
@@ -54,12 +54,11 @@ public final class SignGUI {
 		final BlockPosition blockPosition = new BlockPosition(player.getLocation().getBlockX(), 1, player.getLocation().getBlockZ());
 
 		PacketPlayOutBlockChange packet = new PacketPlayOutBlockChange(((CraftWorld) player.getWorld()).getHandle(), blockPosition);
-		packet.block = CraftMagicNumbers.getBlock(Material.OAK_SIGN, (byte) 0);
+		packet.block = CraftMagicNumbers.getBlock(Material.SIGN_POST).getBlockData();
 		sendPacket(packet);
 
 		IChatBaseComponent[] components = CraftSign.sanitizeLines(lines);
 		TileEntitySign       sign       = new TileEntitySign();
-		sign.setPosition(new BlockPosition(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()));
 		System.arraycopy(components, 0, sign.lines, 0, sign.lines.length);
 		sendPacket(sign.getUpdatePacket());
 
