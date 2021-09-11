@@ -1,18 +1,11 @@
 package fr.cleymax.signgui;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutBlockChange;
-import net.minecraft.network.protocol.game.PacketPlayOutOpenSignEditor;
-import net.minecraft.world.item.EnumColor;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.TileEntitySign;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_17_R1.block.CraftSign;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_8_R3.block.CraftSign;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.Player;
 
 import java.beans.ConstructorProperties;
@@ -55,15 +48,14 @@ public final class SignGUI {
 
         final var blockPosition = new BlockPosition(player.getLocation().getBlockX(), 1, player.getLocation().getBlockZ());
 
-        var packet = new PacketPlayOutBlockChange(blockPosition, CraftMagicNumbers.getBlock(Material.OAK_SIGN, (byte) 0));
+        var packet = new PacketPlayOutBlockChange((World) player.getWorld(), blockPosition);
         sendPacket(packet);
 
         IChatBaseComponent[] components = CraftSign.sanitizeLines(lines);
-        var sign = new TileEntitySign(blockPosition, Blocks.cg.getBlockData());
-        sign.setColor(EnumColor.p);
+        var sign = new TileEntitySign();
 
         for (var i = 0; i < components.length; i++)
-            sign.a(i, components[i]);
+            sign.lines[i] = (components[i]);
 
         sendPacket(sign.getUpdatePacket());
 
@@ -74,7 +66,7 @@ public final class SignGUI {
 
     private void sendPacket(Packet<?> packet) {
         Preconditions.checkNotNull(this.player);
-        ((CraftPlayer) this.player).getHandle().b.sendPacket(packet);
+        ((CraftPlayer) this.player).getHandle().playerConnection.sendPacket(packet);
     }
 
     SignClickCompleteHandler getCompleteHandler() {

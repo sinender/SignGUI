@@ -3,10 +3,10 @@ package fr.cleymax.signgui;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.network.protocol.game.PacketPlayInUpdateSign;
+import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.PacketPlayInUpdateSign;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -74,14 +74,14 @@ public final class SignManager {
 					super.channelRead(ctx, packet);
 				}
 			};
-			final ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().b.a.k.pipeline();
+			final ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
 			pipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
 		}
 
 		@EventHandler()
 		public void onPlayerQuit(PlayerQuitEvent event)
 		{
-			final var channel = ((CraftPlayer) event.getPlayer()).getHandle().b.a.k;
+			final var channel = ((CraftPlayer) event.getPlayer()).getHandle().playerConnection.networkManager.channel;
 			channel.eventLoop().submit(() -> channel.pipeline().remove(event.getPlayer().getName()));
 			guiMap.remove(event.getPlayer().getUniqueId());
 		}
